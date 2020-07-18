@@ -19,6 +19,10 @@ sssUrl = settings["sssUrl"]
 deepstackUrl = settings["deepstackUrl"]
 username = settings["username"]
 password = settings["password"]
+#detection_labels= ['car', 'person']
+detection_labels=settings["detect_labels"]
+min_sizex=int(settings["min_sizex"])
+min_sizey=int(settings["min_sizey"])
 
 
 def save_cookies(requests_cookiejar, filename):
@@ -54,13 +58,18 @@ async def read_item(camera_id):
 
     image_data = open(f"tmp/{camera_id}.jpg","rb").read()
 
-    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data}).json()
+    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data},timeout=10).json()
 
     i = 0
     for object in response["predictions"]:
         confidence = round(100 * object["confidence"])
         label = object["label"]
-        if label in ['car', 'person']:
+        sizex=int(object["x_max"])-int(object["x_min"])
+        sizey=int(object["y_max"])-int(object["y_min"])
+        logging.debug(f"  {label} ({confidence}%)   {sizex}x{sizey}")
+        if label in detection_labels and \
+           sizex>min_sizex and \
+           sizey>min_sizey:
 
             payload = {}
             response = requests.request("GET", triggerurl, data = payload)

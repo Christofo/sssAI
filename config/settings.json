@@ -3,6 +3,8 @@
     "sssUrl":"http://192.168.0.10:5000",
     "deepstackUrl": "http://192.168.0.10:83",
     "username": "yourusername",
-    "password": "yourpassword"
- 
+    "password": "yourpassword",
+    "detect_labels": ["person"],
+    "min_sizex": 100,
+    "min_sizey": 100
 }
