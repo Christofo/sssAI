@@ -1,12 +1,12 @@
 {
-    "sssUrl":"http://192.168.0.10:5000", // URL with port to your Synology - not to surveillance station
-    "deepstackUrl": "http://192.168.0.10:83", // URL with port to your Deepstack install
-    "username": "username", // Username to login to Synology
-    "password": "passowrd", // Password to login to Synology
-    "detect_labels": ["person, car"], // Full list of available detections here: https://python.deepstack.cc/object-detection
-    "min_sizex": 100, // How large of an object to trigger a detection, here it is 100x100 pixels
-    "min_sizey": 100, // How large of an object to trigger a detection, here it is 100x100 pixels
-    "triggerInterval": "30", // Limit how often a camera can trigger, number is seconds
-    "captureDir": "/captureDir", // This is where annotated images will be saved upon a successful detection
-    "homebridgeWebhookUrl": "" // Used for homekit integration, leave blank if not in use
+    "sssUrl":"http://192.168.0.10:5000", 
+    "deepstackUrl": "http://192.168.0.10:83", 
+    "username": "username", 
+    "password": "passowrd", 
+    "detect_labels": ["person, car"],
+    "min_sizex": 100, 
+    "min_sizey": 100, 
+    "triggerInterval": "30", 
+    "captureDir": "/captureDir", 
+    "homebridgeWebhookUrl": "" 
 }
