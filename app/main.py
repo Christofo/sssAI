@@ -25,6 +25,11 @@ deepstackUrl = settings["deepstackUrl"]
 homebridgeWebhookUrl = settings["homebridgeWebhookUrl"]
 username = settings["username"]
 password = settings["password"]
+#detection_labels= ['car', 'person']
+detection_labels=settings["detect_labels"]
+min_sizex=int(settings["min_sizex"])
+min_sizey=int(settings["min_sizey"])
+
 if "triggerInterval" in settings:
     trigger_interval = settings["triggerInterval"]
 else:
@@ -89,7 +94,7 @@ async def read_item(camera_id):
         homekit_acc_id = cameradata[f"{camera_id}"]["homekitAccId"]
  
     response = requests.request("GET", url, cookies=load_cookies('cookie'))
-    logging.info('Requested snapshot: ' + url)
+    logging.debug('Requested snapshot: ' + url)
     if response.status_code == 200:
         with open(f"tmp/{camera_id}.jpg", 'wb') as f:
             f.write(response.content)
@@ -99,9 +104,10 @@ async def read_item(camera_id):
     image_data = open(snapshot_file,"rb").read()
     logging.info('Requesting detection from DeepStack...');
     s = time.perf_counter()
-    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data}).json()
+    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data},timeout=10).json()
+
     e = time.perf_counter() 
-    logging.info(f'Got result: {json.dumps(response, indent=2)}. Time: {e-s}s');
+    logging.debug(f'Got result: {json.dumps(response, indent=2)}. Time: {e-s}s');
     if not response["success"]:
         return ("Error calling Deepstack: " + response["error"]);
     
@@ -118,7 +124,14 @@ async def read_item(camera_id):
     for object in response["predictions"]:
         confidence = round(100 * object["confidence"])
         label = object["label"]
-        if not found and label in ['car', 'person']:
+        sizex=int(object["x_max"])-int(object["x_min"])
+        sizey=int(object["y_max"])-int(object["y_min"])
+        logging.debug(f"  {label} ({confidence}%)   {sizex}x{sizey}")
+
+        if not found and label in detection_labels and \
+           sizex>min_sizex and \
+           sizey>min_sizey:
+
             payload = {}
             response = requests.request("GET", triggerurl, data = payload)
             end = time.time()
@@ -128,29 +141,13 @@ async def read_item(camera_id):
             found = True
             last_trigger[camera_id] = time.time()
             save_last_trigger(last_trigger)
-            logging.info(f"Saving last camera time for {camera_id} as {last_trigger[camera_id]}")
+            logging.debug(f"Saving last camera time for {camera_id} as {last_trigger[camera_id]}")
 
             if homebridgeWebhookUrl is not None and homekit_acc_id is not None:
                 hb = requests.get(f"{homebridgeWebhookUrl}/?accessoryId={homekit_acc_id}&state=true");
-                logging.info(f"Sent message to homebridge webhook: {hb.status_code}");
+                logging.debug(f"Sent message to homebridge webhook: {hb.status_code}");
             else:
-                logging.info(f"Skipping HomeBridge Webhook since no webhookUrl or accessory Id");
-            
-            # person_name = "Person"
-            # logging.info(f"Seeing if we can recognise the person...");
-            # s = time.perf_counter()
-            # response = requests.post(f"{deepstackUrl}/v1/vision/face/recognize",files={"image":image_data}).json()
-            # e = time.perf_counter()
-            #  logging.info(f'Recognise result: {json.dumps(response, indent=2)}. Took: {e-s}s');ta())
-            # if response["success"] and "predictions" in response:
-            #    for prediction in response["predictions"]:
-            #        if prediction["userid"] == "unknown":
-            #            person_name = "Person"
-            #        else:
-            #            person_name = prediction["userid"]
-            
-            # ifttt = requests.post("https://maker.ifttt.com/trigger/sssai/with/key/pYE7o-wEyl7s1sN3b_0Vygzel1Rger35f0d8UEQX4xo", json={"value1": label, "value2": str(confidence),"value3": labels});
-            # logging.info(f"Sent message to ifttt: {ifttt.status_code}");
+                logging.debug(f"Skipping HomeBridge Webhook since no webhookUrl or accessory Id");
         i += 1
     
     end = time.time()
