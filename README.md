@@ -8,11 +8,12 @@ This fork adds:
 
 # HomeKit
 The HomeKit integration presents as a normal motion alert for that camera that has been added to HomeBridge (via Camera-ffmpeg). You need to add:
-                    "motion": true,
+```                    "motion": true,
                     "switches": true
+```
 to the camera definition in HomeBridge, and add the appropriate Webhook based switches with Homebridge Webooks plugin. 
 
-When you setup the webhook plugin you need at add the URL to settings.json via the parameter 'homebridgeWebhookUrl (e.g. "http://192.1.1.67:51828")
+When you setup the webhook plugin you need at add the URL to settings.json via the parameter 'homebridgeWebhookUrl' (e.g. http://<synologyIP>:<webhookPort>).
 
 # Border Box Annotations
 If you include 'captureDir' as a setting in the config.json, then the images that are captured will be saved to that directory with the AI meta-data overlaid (label name, and confidence). For example: Person (98%). 
