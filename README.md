@@ -8,8 +8,9 @@ This fork adds:
 
 # HomeKit
 The HomeKit integration presents as a normal motion alert for that camera that has been added to HomeBridge (via Camera-ffmpeg). You need to add:
-```                    "motion": true,
-                    "switches": true
+```                    
+"motion": true,
+"switches": true
 ```
 to the camera definition in HomeBridge, and add the appropriate Webhook based switches with Homebridge Webooks plugin. 
 
