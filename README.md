@@ -9,6 +9,6 @@ Features:
 
 
 ## Performance 
-* DS20+ (20GB RAM) - Deepstack set to "low" - ~2 seconds for image recognition 
+* DS920+ (20GB RAM) - Deepstack set to "low" - ~2 seconds for image recognition 
 * DS918+ (12GB RAM) - Deepstack set to "medium" - ~4 seconds for image recognition
 
