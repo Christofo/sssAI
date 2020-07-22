@@ -4,4 +4,4 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY ./app /app
 COPY run.py /run.py
 CMD ["python", "/run.py"]
-RUN pip install requests loguru
+RUN pip install requests loguru pillow
