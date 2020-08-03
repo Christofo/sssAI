@@ -171,6 +171,7 @@ def save_image(predictions, camera_name, snapshot_file):
         draw.text((object["x_min"]+10, object["y_min"]+10), f"{label}", fill=(255,230,66))
     fn = f"{capture_dir}/{camera_name}-{start}.jpg";
     im.save(f"{fn}", quality=95);
+    im.close()
     end = time.time()
     runtime = round(end - start, 1)    
     logging.debug(f"Saved captured and annotated image: {fn} in {runtime} seconds.");
