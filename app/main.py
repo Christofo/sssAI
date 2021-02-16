@@ -27,8 +27,11 @@ username = settings["username"]
 password = settings["password"]
 #detection_labels= ['car', 'person']
 detection_labels=settings["detect_labels"]
+timeout=int(settings["timeout"])
 min_sizex=int(settings["min_sizex"])
 min_sizey=int(settings["min_sizey"])
+min_confidence=int(settings["min_confidence"])
+
 
 if "triggerInterval" in settings:
     trigger_interval = settings["triggerInterval"]
@@ -104,7 +107,7 @@ async def read_item(camera_id):
     image_data = open(snapshot_file,"rb").read()
     logging.info('Requesting detection from DeepStack...');
     s = time.perf_counter()
-    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data},timeout=10).json()
+    response = requests.post(f"{deepstackUrl}/v1/vision/detection",files={"image":image_data},timeout=timeout).json()
 
     e = time.perf_counter() 
     logging.debug(f'Got result: {json.dumps(response, indent=2)}. Time: {e-s}s');
@@ -130,7 +133,8 @@ async def read_item(camera_id):
 
         if not found and label in detection_labels and \
            sizex>min_sizex and \
-           sizey>min_sizey:
+           sizey>min_sizey and \
+           confidence>min_confidence:
 
             payload = {}
             response = requests.request("GET", triggerurl, data = payload)
@@ -170,7 +174,7 @@ def save_image(predictions, camera_name, snapshot_file):
         draw.rectangle((object["x_min"], object["y_min"], object["x_max"], object["y_max"]), outline=(255, 230, 66), width=2);
         draw.text((object["x_min"]+10, object["y_min"]+10), f"{label}", fill=(255,230,66))
     fn = f"{capture_dir}/{camera_name}-{start}.jpg";
-    im.save(f"{fn}", quality=95);
+    im.save(f"{fn}", quality=100);
     im.close()
     end = time.time()
     runtime = round(end - start, 1)    
