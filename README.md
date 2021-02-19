@@ -1,4 +1,4 @@
-This come from https://github.com/Christofo/sssAI I just added couple of small changed:
+This comes from https://github.com/Christofo/sssAI I just added couple of small changed:
 - threshold value
 - areas to ignore
 - set able timeout
