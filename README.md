@@ -1,3 +1,8 @@
+This come from https://github.com/Christofo/sssAI I just added couple of small changed:
+- threshold value
+- areas to ignore
+- set able timeout
+
 # sssAI
 AI based motion detection for Synology Surveillance Station - For instructions on use see https://blog.cadams.me - Wiki coming soon!
 
@@ -11,4 +16,5 @@ Features:
 ## Performance 
 * DS920+ (20GB RAM) - Deepstack set to "low" - ~2 seconds for image recognition 
 * DS918+ (12GB RAM) - Deepstack set to "medium" - ~4 seconds for image recognition
+* DS713+ (4GB RAM) - Deepstack set to "medium" - ~9 seconds for image recognition 
 

@@ -1,14 +1,26 @@
 {
-    "sssUrl":"http://192.168.178.10:5000", 
-    "deepstackUrl": "http://192.168.178.10:83", 
-    "username": "username", 
-    "password": "passowrd", 
-    "detect_labels": ["person"],
-    "min_sizex": 100, 
-    "min_sizey": 100, 
-    "triggerInterval": 15, 
-    "timeout": 180, 
-    "min_confidence": 60, 
-    "captureDir": "/captureDir", 
-    "homebridgeWebhookUrl": null
+	"sssUrl": "http://192.168.178.10:5000",
+	"deepstackUrl": "http://192.168.178.10:83",
+	"username": "username",
+	"password": "passowrd",
+	"detect_labels": [
+		"person"
+	],
+	"min_sizex": 100,
+	"min_sizey": 100,
+	"triggerInterval": 15,
+	"timeout": 180,
+	"min_confidence": 60,
+	"captureDir": "/captureDir",
+	"homebridgeWebhookUrl": null,
+	"ignore_areas": [
+		[
+			{
+				"y_min": 692,
+				"x_min": 3,
+				"y_max": 1294,
+				"x_max": 318
+			}
+		]
+	]
 }
