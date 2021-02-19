@@ -49,7 +49,13 @@ if "min_confidence" in settings:
 
 ignore_areas = []
 if "ignore_areas" in settings:
-    ignore_areas = settings["ignore_areas"]
+    for ignore_area in settings["ignore_areas"]:
+        ignore_areas.append({
+            "y_min": int(ignore_area["y_min"]),
+            "x_min": int(ignore_area["x_min"]),
+            "y_max": int(ignore_area["y_max"]),
+            "x_max": int(ignore_area["x_max"])
+        })
 
 # If no trigger interval set then make it 60s (i.e. don't send another event from the triggered camera for at least 60s to stop flooding event notifications
 trigger_interval = 60
