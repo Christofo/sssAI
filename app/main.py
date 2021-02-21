@@ -106,10 +106,9 @@ def contains(rOutside, rInside):
     return rOutside["x_min"] < rInside["x_min"] < rInside["x_max"] < rOutside["x_max"] and \
         rOutside["y_min"] < rInside["y_min"] < rInside["y_max"] < rOutside["y_max"]
 
-# I ignore areas which include the area to ignore and not the other way round
-# this is because I have laps which look like people and I only wanna mark the round bit (head lookalike)
-
-
+# I ignore areas which include the area-to-ignore and not the other way round
+# this is because I have lamps which look like people and I only wanna mark the round bit (head lookalike)
+# if you like to ignore objects which are totally inside the ignore-area do: contains(ignore_area, rect)
 def isIgnored(rect):
     for ignore_area in ignore_areas:
         if contains(rect, ignore_area):
