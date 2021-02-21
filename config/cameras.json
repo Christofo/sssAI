@@ -1,7 +1,12 @@
 {
-    "4": 
-        {
-        "name":"Gate",
-        "triggerUrl": "URL from Action Rule to trigger the camera goes here"
-        }
+	"1": 
+			{
+			"name":"Back Yard",
+			"triggerUrl": "URL from Action Rule to trigger the camera goes here"
+			},
+	"2":
+			{
+			"name": "Front Door",
+			"triggerUrl": "URL from Action Rule to trigger the camera goes here"
+			}
 }

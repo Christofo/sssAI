@@ -1,8 +1,3 @@
-This comes from https://github.com/Christofo/sssAI I just added couple of small changed:
-- threshold value
-- areas to ignore
-- set able timeout
-
 # sssAI
 AI based motion detection for Synology Surveillance Station - For instructions on use see https://blog.cadams.me - Wiki coming soon!
 

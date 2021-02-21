@@ -10,8 +10,7 @@ import pickle
 import time
 import os
 
-logging.basicConfig(
-    format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 logging.info('App Started')
 app = FastAPI()
 
@@ -66,16 +65,13 @@ capture_dir = "/captureDir"
 if "captureDir" in settings:
     capture_dir = settings["captureDir"]
 
-
 def save_cookies(requests_cookiejar, filename):
     with open(filename, 'wb') as f:
         pickle.dump(requests_cookiejar, f)
 
-
 def load_cookies(filename):
     with open(filename, 'rb') as f:
         return pickle.load(f)
-
 
 # Create a session with synology
 url = f"{sssUrl}/webapi/auth.cgi?api=SYNO.API.Auth&method=Login&version=1&account={username}&passwd={password}&session=SurveillanceStation"
@@ -88,11 +84,9 @@ save_cookies(r.cookies, 'cookie')
 # Dictionary to save last trigger times for camera to stop flooding the capability
 last_trigger_fn = f"/tmp/last.dict"
 
-
 def save_last_trigger(last_trigger):
     with open(last_trigger_fn, 'wb') as f:
         pickle.dump(last_trigger, f)
-
 
 def load_last_trigger():
     if os.path.exists(last_trigger_fn):
@@ -101,20 +95,17 @@ def load_last_trigger():
     else:
         return {}
 
-
 def contains(rOutside, rInside):
     return rOutside["x_min"] < rInside["x_min"] < rInside["x_max"] < rOutside["x_max"] and \
         rOutside["y_min"] < rInside["y_min"] < rInside["y_max"] < rOutside["y_max"]
 
 # I ignore areas which include the area-to-ignore and not the other way round
-# this is because I have lamps which look like people and I only wanna mark the round bit (head lookalike)
-# if you like to ignore objects which are totally inside the ignore-area do: contains(ignore_area, rect)
+# if you like to ignore objects which are completely inside the ignore-area do: contains(ignore_area, rect)
 def isIgnored(rect):
     for ignore_area in ignore_areas:
         if contains(rect, ignore_area):
             return True
     return False
-
 
 @app.get("/{camera_id}")
 async def read_item(camera_id):
@@ -132,8 +123,7 @@ async def read_item(camera_id):
             logging.info(msg)
             return (msg)
         else:
-            logging.info(
-                f"Processing event on camera (last trigger was {start-t}s ago)")
+            logging.info(f"Processing event on camera (last trigger was {start-t}s ago)")
     else:
         logging.info(f"No last camera time for {camera_id}")
 
@@ -156,12 +146,10 @@ async def read_item(camera_id):
     image_data = open(snapshot_file, "rb").read()
     logging.info('Requesting detection from DeepStack...')
     s = time.perf_counter()
-    response = requests.post(f"{deepstackUrl}/v1/vision/detection",
-                             files={"image": image_data}, timeout=timeout).json()
+    response = requests.post(f"{deepstackUrl}/v1/vision/detection", files={"image": image_data}, timeout=timeout).json()
 
     e = time.perf_counter()
-    logging.debug(
-        f'Got result: {json.dumps(response, indent=2)}. Time: {e-s}s')
+    logging.debug(f'Got result: {json.dumps(response, indent=2)}. Time: {e-s}s')
     if not response["success"]:
         return ("Error calling Deepstack: " + response["error"])
 
@@ -192,23 +180,18 @@ async def read_item(camera_id):
             response = requests.request("GET", triggerurl, data=payload)
             end = time.time()
             runtime = round(end - start, 1)
-            logging.info(
-                f"{confidence}% sure we found a {label} - triggering {cameraname} - took {runtime} seconds")
+            logging.info(f"{confidence}% sure we found a {label} - triggering {cameraname} - took {runtime} seconds")
 
             found = True
             last_trigger[camera_id] = time.time()
             save_last_trigger(last_trigger)
-            logging.debug(
-                f"Saving last camera time for {camera_id} as {last_trigger[camera_id]}")
+            logging.debug(f"Saving last camera time for {camera_id} as {last_trigger[camera_id]}")
 
             if homebridgeWebhookUrl is not None and homekit_acc_id is not None:
-                hb = requests.get(
-                    f"{homebridgeWebhookUrl}/?accessoryId={homekit_acc_id}&state=true")
-                logging.debug(
-                    f"Sent message to homebridge webhook: {hb.status_code}")
+                hb = requests.get(f"{homebridgeWebhookUrl}/?accessoryId={homekit_acc_id}&state=true")
+                logging.debug(f"Sent message to homebridge webhook: {hb.status_code}")
             else:
-                logging.debug(
-                    f"Skipping HomeBridge Webhook since no webhookUrl or accessory Id")
+                logging.debug(f"Skipping HomeBridge Webhook since no webhookUrl or accessory Id")
         i += 1
 
     end = time.time()
@@ -217,8 +200,7 @@ async def read_item(camera_id):
         save_image(predictions, cameraname, snapshot_file)
         return ("triggering camera because something was found - took {runtime} seconds")
     else:
-        logging.info(
-            f"{cameraname} triggered - nothing found - took {runtime} seconds")
+        logging.info(f"{cameraname} triggered - nothing found - took {runtime} seconds")
         return (f"{cameraname} triggered - nothing found")
 
 
@@ -239,13 +221,11 @@ def save_image(predictions, camera_name, snapshot_file):
     for ignore_area in ignore_areas:
         draw.rectangle((ignore_area["x_min"], ignore_area["y_min"],
                         ignore_area["x_max"], ignore_area["y_max"]), outline=(255, 66, 66), width=2)
-        draw.text(
-            (ignore_area["x_min"]+10, ignore_area["y_min"]+10), f"ignore", fill=(255, 66, 66))
+        draw.text((ignore_area["x_min"]+10, ignore_area["y_min"]+10), f"ignore", fill=(255, 66, 66))
 
     fn = f"{capture_dir}/{camera_name}-{start}.jpg"
     im.save(f"{fn}", quality=100)
     im.close()
     end = time.time()
     runtime = round(end - start, 1)
-    logging.debug(
-        f"Saved captured and annotated image: {fn} in {runtime} seconds.")
+    logging.debug(f"Saved captured and annotated image: {fn} in {runtime} seconds.")
