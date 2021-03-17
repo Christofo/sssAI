@@ -12,13 +12,5 @@
 	"timeout": 180,
 	"min_confidence": 60,
 	"captureDir": "/captureDir",
-	"homebridgeWebhookUrl": null,
-	"ignore_areas": [
-		{
-			"y_min": 692,
-			"x_min": 3,
-			"y_max": 1294,
-			"x_max": 318
-		}
-	]
+	"homebridgeWebhookUrl": null
 }

@@ -46,15 +46,7 @@ min_confidence = 0
 if "min_confidence" in settings:
     min_confidence = int(settings["min_confidence"])
 
-ignore_areas = []
-if "ignore_areas" in settings:
-    for ignore_area in settings["ignore_areas"]:
-        ignore_areas.append({
-            "y_min": int(ignore_area["y_min"]),
-            "x_min": int(ignore_area["x_min"]),
-            "y_max": int(ignore_area["y_max"]),
-            "x_max": int(ignore_area["x_max"])
-        })
+
 
 # If no trigger interval set then make it 60s (i.e. don't send another event from the triggered camera for at least 60s to stop flooding event notifications
 trigger_interval = 60
@@ -101,7 +93,7 @@ def contains(rOutside, rInside):
 
 # I ignore areas which include the area-to-ignore and not the other way round
 # if you like to ignore objects which are completely inside the ignore-area do: contains(ignore_area, rect)
-def isIgnored(rect):
+def isIgnored(rect, ignore_areas):
     for ignore_area in ignore_areas:
         if contains(rect, ignore_area):
             return True
@@ -131,6 +123,16 @@ async def read_item(camera_id):
     triggerurl = cameradata[f"{camera_id}"]["triggerUrl"]
     if "homekitAccId" in cameradata[f"{camera_id}"]:
         homekit_acc_id = cameradata[f"{camera_id}"]["homekitAccId"]
+
+    ignore_areas = []
+    if "ignore_areas" in cameradata[f"{camera_id}"]:
+        for ignore_area in cameradata[f"{camera_id}"]["ignore_areas"]:
+            ignore_areas.append({
+                "y_min": int(ignore_area["y_min"]),
+                "x_min": int(ignore_area["x_min"]),
+                "y_max": int(ignore_area["y_max"]),
+                "x_max": int(ignore_area["x_max"])
+            })
 
     response = requests.request("GET", url, cookies=load_cookies('cookie'))
     logging.debug('Requested snapshot: ' + url)
@@ -174,7 +176,7 @@ async def read_item(camera_id):
            sizex > min_sizex and \
            sizey > min_sizey and \
            confidence > min_confidence and \
-           not isIgnored(prediction):
+           not isIgnored(prediction, ignore_areas):
 
             payload = {}
             response = requests.request("GET", triggerurl, data=payload)
@@ -197,14 +199,14 @@ async def read_item(camera_id):
     end = time.time()
     runtime = round(end - start, 1)
     if found:
-        save_image(predictions, cameraname, snapshot_file)
+        save_image(predictions, cameraname, snapshot_file, ignore_areas)
         return ("triggering camera because something was found - took {runtime} seconds")
     else:
         logging.info(f"{cameraname} triggered - nothing found - took {runtime} seconds")
         return (f"{cameraname} triggered - nothing found")
 
 
-def save_image(predictions, camera_name, snapshot_file):
+def save_image(predictions, camera_name, snapshot_file, ignore_areas):
     start = time.time()
     logging.debug(f"Saving new image file....")
     im = Image.open(snapshot_file)
