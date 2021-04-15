@@ -95,7 +95,7 @@ def contains(rOutside, rInside):
 # if you like to ignore objects which are completely inside the ignore-area do: contains(ignore_area, rect)
 def isIgnored(rect, ignore_areas):
     for ignore_area in ignore_areas:
-        if contains(rect, ignore_area):
+        if contains(ignore_area, rect):
             return True
     return False
 
