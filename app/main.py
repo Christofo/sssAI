@@ -91,11 +91,11 @@ def contains(rOutside, rInside):
     return rOutside["x_min"] < rInside["x_min"] < rInside["x_max"] < rOutside["x_max"] and \
         rOutside["y_min"] < rInside["y_min"] < rInside["y_max"] < rOutside["y_max"]
 
-# I ignore areas which include the area-to-ignore and not the other way round
-# if you like to ignore objects which are completely inside the ignore-area do: contains(ignore_area, rect)
+# If you would like to ignore objects outside the ignore area instead of inside, set this to contains(rect, ignore_area):
 def isIgnored(rect, ignore_areas):
     for ignore_area in ignore_areas:
         if contains(ignore_area, rect):
+            logging.info('Object in ignore area, not triggering')
             return True
     return False
 
