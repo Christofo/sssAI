@@ -137,14 +137,11 @@ async def read_item(camera_id):
     response = requests.request("GET", url, cookies=load_cookies('cookie'))
     logging.debug('Requested snapshot: ' + url)
     if response.status_code == 200:
-        if not os.path.exists("tmp"):
-            os.makedirs("tmp")
-
-        with open(f"tmp/{camera_id}.jpg", 'wb') as f:
+        with open(f"/tmp/{camera_id}.jpg", 'wb') as f:
             f.write(response.content)
             logging.debug('Snapshot downloaded')
 
-    snapshot_file = f"tmp/{camera_id}.jpg"
+    snapshot_file = f"/tmp/{camera_id}.jpg"
     image_data = open(snapshot_file, "rb").read()
     logging.info('Requesting detection from DeepStack...')
     s = time.perf_counter()
