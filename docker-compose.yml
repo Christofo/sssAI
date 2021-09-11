@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+  sssai:
+    depends_on:
+      - deepstack
+    build:
+      context: .
+      args:
+        TZ: Australia/Sydney
+    image: sssai:latest
+    container_name: ssaai
+    volumes:
+      # mkdir -p ./data/captures
+      - ./data/captures:/captureDir
+      - ./cameras.json:/config/cameras.json:ro
+      - ./settings.json:/config/settings.json:ro
+    ports:
+      - "4242:80"
+
+  deepstack:
+    image: deepquestai/deepstack
+    container_name: ssaai_deepstack
+    env_file:
+      - 'deepstack.env'
+    volumes:
+      # mkdir -p ./data/deepstack
+      - ./data/deepstack:/datastore
+# Exposing this port on the host is not necessary but can be useful for testing
+#    ports:
+#      - "5083:5000"
