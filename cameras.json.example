@@ -1,0 +1,14 @@
+{
+    "1":
+        {
+        "name":"Back Yard",
+        "threshold": 50,
+        "triggerUrl": "URL from Action Rule to trigger the camera goes here"
+        },
+    "2":
+        {
+        "name": "Front Door",
+        "threshold": 50,
+        "triggerUrl": "URL from Action Rule to trigger the camera goes here"
+        }
+}
