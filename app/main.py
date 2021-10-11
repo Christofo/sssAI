@@ -20,11 +20,26 @@ with open('/config/cameras.json') as f:
 with open('/config/settings.json') as f:
     settings = json.load(f)
 
-sssUrl = settings["sssUrl"]
-deepstackUrl = settings["deepstackUrl"]
 homebridgeWebhookUrl = settings["homebridgeWebhookUrl"]
-username = settings["username"]
-password = settings["password"]
+
+deepstackUrl = os.getenv('DEEPSTACK_URL', settings.get('deepstackUrl', None))
+if not deepstackUrl:
+    raise ValueError("deepstack url must be specified by environment variable or by settings.json")
+
+authApiVersion = os.getenv('SYNO_API_VERSION', 1)
+sssApiVersion = os.getenv('SSS_API_VERSION', 2)
+
+sssUrl = os.getenv('SSS_URL', settings.get('sssUrl', None))
+if not sssUrl:
+    raise ValueError("sss url must be specified by environment variable or by settings.json")
+
+username = os.getenv('SSS_USERNAME', settings.get('username', None))
+if not username:
+    raise ValueError("sss username must be specified by environment variable or by settings.json")
+
+password = os.getenv('SSS_PASSWORD', settings.get('password', None))
+if not password:
+    raise ValueError("sss password must be specified by enviornment variable or by settings.json")
 
 detection_labels = ['car', 'person']
 if "detect_labels" in settings:
@@ -66,7 +81,7 @@ def load_cookies(filename):
         return pickle.load(f)
 
 # Create a session with synology
-url = f"{sssUrl}/webapi/auth.cgi?api=SYNO.API.Auth&method=Login&version=1&account={username}&passwd={password}&session=SurveillanceStation"
+url = f"{sssUrl}/webapi/auth.cgi?api=SYNO.API.Auth&method=Login&version={authApiVersion}&account={username}&passwd={password}&session=SurveillanceStation"
 
 #  Save cookies
 logging.info('Session login: ' + url)
@@ -119,7 +134,7 @@ async def read_item(camera_id):
     else:
         logging.info(f"No last camera time for {camera_id}")
 
-    url = f"{sssUrl}/webapi/entry.cgi?camStm=1&version=2&cameraId={camera_id}&api=%22SYNO.SurveillanceStation.Camera%22&method=GetSnapshot"
+    url = f"{sssUrl}/webapi/entry.cgi?camStm=1&version={sssApiVersion}&cameraId={camera_id}&api=SYNO.SurveillanceStation.Camera&method=GetSnapshot"
     triggerurl = cameradata[f"{camera_id}"]["triggerUrl"]
     if "homekitAccId" in cameradata[f"{camera_id}"]:
         homekit_acc_id = cameradata[f"{camera_id}"]["homekitAccId"]
