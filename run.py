@@ -12,6 +12,7 @@ from app.main import app
 LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL", "INFO"))
 JSON_LOGS = True if os.environ.get("JSON_LOGS", "0") == "1" else False
 WORKERS = int(os.environ.get("GUNICORN_WORKERS", "5"))
+WEB_BIND = os.environ.get("WEB_BIND", "0.0.0.0:80")
 
 
 class InterceptHandler(logging.Handler):
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     logger.configure(handlers=[{"sink": sys.stdout, "serialize": JSON_LOGS}])
 
     options = {
-        "bind": "0.0.0.0:80",
+        "bind": WEB_BIND,
         "workers": WORKERS,
         "accesslog": "",
         "errorlog": "",
