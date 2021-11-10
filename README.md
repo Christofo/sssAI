@@ -1,3 +1,5 @@
+# Check out [SynoAI](https://github.com/djdd87/SynoAI) - I no longer maintain sssAI
+
 # sssAI
 AI based motion detection for Synology Surveillance Station - For instructions on use see https://blog.cadams.me - Wiki coming soon!
 
