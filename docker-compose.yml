@@ -1,0 +1,34 @@
+version: "3.3"
+
+services:
+  sssai:
+    restart: unless-stopped
+    depends_on:
+      - deepstack
+    image: registry.gitlab.com/thiagoconde/sssai/master:latest
+#    image: registry.gitlab.com/thiagoconde/sssai/tests-refactors-etc:latest
+    container_name: ssaai
+    environment:
+      TZ: Australia/Sydney
+#      LOG_LEVEL: debug
+    volumes:
+      # mkdir -p ./data/captures
+      - ./data/captures:/captureDir
+      - ./data/work_dir:/work_dir
+      - ./cameras.json:/config/cameras.json:ro
+      - ./settings.json:/config/settings.json:ro
+    ports:
+      - "4242:80"
+
+  deepstack:
+    restart: unless-stopped
+    image: deepquestai/deepstack
+    container_name: ssaai_deepstack
+    env_file:
+      - 'deepstack.env'
+    volumes:
+      # mkdir -p ./data/deepstack
+      - ./data/deepstack:/datastore
+# Exposing this port on the host is not necessary but can be useful for testing
+#    ports:
+#      - "5083:5000"

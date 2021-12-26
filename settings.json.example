@@ -1,0 +1,12 @@
+{
+    "sssUrl":"http://SYNOLOGY_ADDRESS:5000",
+    "deepstackUrl": "http://deepstack:5000",
+    "username": "username",
+    "password": "passowrd",
+    "detect_labels": ["person", "car"],
+    "min_sizex": 100,
+    "min_sizey": 100,
+    "triggerInterval": 60,
+    "captureDir": "/captureDir",
+    "homebridgeWebhookUrl": null
+}
